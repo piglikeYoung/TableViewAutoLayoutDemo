@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  JHTableViewCell.h
 //  TableViewAutoLayoutDemo
 //
 //  Created by piglikeyoung on 15/9/19.
@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
+@class JHCellEntity;
 
+@interface JHTableViewCell : UITableViewCell
+
+- (void)setupData:(JHCellEntity *)dataEntity;
 
 @end
-
