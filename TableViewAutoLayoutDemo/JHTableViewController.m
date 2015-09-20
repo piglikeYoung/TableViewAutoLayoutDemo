@@ -10,6 +10,9 @@
 #import "JHCellEntity.h"
 #import "JHTableViewCell.h"
 
+// 注释掉下面的宏定义，就是用“传统”的模板Cell计算高度
+#define IOS_8_NEW_FEATURE_SELF_SIZING
+
 static const NSInteger dataNum = 20;
 
 @interface JHTableViewController ()
@@ -56,6 +59,12 @@ static const NSInteger dataNum = 20;
     // 注册Cell
     [self.tableView registerClass:[JHTableViewCell class] forCellReuseIdentifier:NSStringFromClass([JHTableViewCell class])];
     
+#ifdef IOS_8_NEW_FEATURE_SELF_SIZING
+    // iOS 8 的Self-sizing特性
+    if ([UIDevice currentDevice].systemVersion.integerValue > 7) {
+        self.tableView.rowHeight = UITableViewAutomaticDimension;
+    }
+#endif
 }
 
 
@@ -67,6 +76,13 @@ static const NSInteger dataNum = 20;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    
+#ifdef IOS_8_NEW_FEATURE_SELF_SIZING
+    
+    // iOS 8 的Self-sizing特性
+    return UITableViewAutomaticDimension;
+    
+#else
     
     static JHTableViewCell *templateCell;
 
@@ -94,6 +110,7 @@ static const NSInteger dataNum = 20;
     // 由于分割线，所以contentView的高度要加上一个像素。
     return dataEntity.cellHeight + 1;
 
+#endif
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
