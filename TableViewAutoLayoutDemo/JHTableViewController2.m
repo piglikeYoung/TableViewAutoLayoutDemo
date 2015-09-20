@@ -1,25 +1,26 @@
 //
-//  JHTableViewController.m
+//  JHTableViewController2.m
 //  TableViewAutoLayoutDemo
 //
 //  Created by piglikeyoung on 15/9/19.
 //  Copyright © 2015年 pikeYoung. All rights reserved.
 //
 
-#import "JHTableViewController.h"
+#import "JHTableViewController2.h"
 #import "JHCellEntity.h"
 #import "JHTableViewCell.h"
 
 static const NSInteger dataNum = 20;
 
-@interface JHTableViewController ()
+static NSString *const cellIdentifier = @"cell2";
 
-@property (nonatomic, strong) NSMutableArray *data;/**< 模拟数据 */
+@interface JHTableViewController2 ()
+
+@property (nonatomic, strong) NSMutableArray *data;
 
 @end
 
-@implementation JHTableViewController
-
+@implementation JHTableViewController2
 
 - (NSMutableArray *)data {
     if (!_data) {
@@ -50,11 +51,8 @@ static const NSInteger dataNum = 20;
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // 预估cell的高度，不需要非常准确
+    // 预估cell的高度
     self.tableView.estimatedRowHeight = 80.0f;
-    
-    // 注册Cell
-    [self.tableView registerClass:[JHTableViewCell class] forCellReuseIdentifier:NSStringFromClass([JHTableViewCell class])];
     
 }
 
@@ -69,11 +67,10 @@ static const NSInteger dataNum = 20;
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
     
     static JHTableViewCell *templateCell;
-
+    
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        // 创建模板，模板只需要一个，不需要重复创建
-        templateCell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([JHTableViewCell class])];
+        templateCell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
     });
     
     // 获取对应的数据
@@ -84,25 +81,23 @@ static const NSInteger dataNum = 20;
     
     // 判断高度是否已经计算过
     if (dataEntity.cellHeight <= 0) {
-        
-        dataEntity.cellHeight = [templateCell.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;
-//        NSLog(@"Calculate height: %ld", (long) dataEntity.cellHeight);
+        // 由于分割线，所以contentView的高度要小于row 一个像素。
+        dataEntity.cellHeight = [templateCell.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height + 1;
+        //        NSLog(@"Calculate height: %ld", (long) dataEntity.cellHeight);
     } else {
-//        NSLog(@"Get cache %ld", (long) indexPath.row);
+        //        NSLog(@"Get cache %ld", (long) indexPath.row);
     }
     
-    // 由于分割线，所以contentView的高度要加上一个像素。
-    return dataEntity.cellHeight + 1;
-
+    return dataEntity.cellHeight;
+    
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    JHTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([JHTableViewCell class]) forIndexPath:indexPath];
+    JHTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier forIndexPath:indexPath];
     
     [cell setupData:self.data[indexPath.row]];
     return cell;
 }
-
 
 @end
