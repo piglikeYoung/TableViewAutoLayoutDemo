@@ -92,11 +92,14 @@ static NSString *const cellIdentifier = @"cell2";
     // 获取对应的数据
     JHCellEntity *dataEntity = self.data[indexPath.row];
     
-    // 填充数据，这里只是拿模板计算cell的高度，并没有返回cell，所以还要在cellForRowAtIndexPath方法中对cell赋值
-    [templateCell setupData:dataEntity];
+    
     
     // 判断高度是否已经计算过
     if (dataEntity.cellHeight <= 0) {
+        
+        // 填充数据，这里只是拿模板计算cell的高度，并没有返回cell，所以还要在cellForRowAtIndexPath方法中对cell赋值
+        [templateCell setupData:dataEntity];
+        
         // 由于分割线，所以contentView的高度要小于row 一个像素。
         dataEntity.cellHeight = [templateCell.contentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height + 1;
         //        NSLog(@"Calculate height: %ld", (long) dataEntity.cellHeight);
